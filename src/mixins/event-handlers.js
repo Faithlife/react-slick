@@ -19,7 +19,7 @@ var EventHandlers = {
         slideOffset = 0;
         let widthAggregation = 0;
         for (let i = currentSlide - 1; i >= 0; i--) {
-          widthAggregation += this.getWidth(slides[i]);
+          widthAggregation += Math.min(this.getWidth(slides[i]), slideWidth);
           if (widthAggregation > slideWidth) {
             break;
           }
@@ -38,7 +38,7 @@ var EventHandlers = {
         slideOffset = 0;
         let widthAggregation = 0;
         for (let i = currentSlide; i < slides.length; i++) {
-          widthAggregation += this.getWidth(slides[i]);
+          widthAggregation += Math.min(this.getWidth(slides[i]), slideWidth);
           if (widthAggregation > slideWidth) {
             break;
           }
