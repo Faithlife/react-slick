@@ -245,24 +245,52 @@ export const changeSlide = (spec, options) => {
   const {
     slidesToScroll,
     slidesToShow,
+    scrollVisibleSlides,
+    slideWidth,
     slideCount,
     currentSlide,
     lazyLoad,
     infinite
   } = spec;
+  const slickList = ReactDOM.findDOMNode(spec.listRef);
+  const slides = slickList.querySelectorAll(".slick-slide");
   unevenOffset = slideCount % slidesToScroll !== 0;
   indexOffset = unevenOffset ? 0 : (slideCount - currentSlide) % slidesToScroll;
 
   if (options.message === "previous") {
-    slideOffset =
+    if (scrollVisibleSlides) {
+      slideOffset = 0;
+      let widthAggregation = 0;
+      for (let i = currentSlide - 1; i >= 0; i--) {
+        widthAggregation += getWidth(slides[i]);
+        if (widthAggregation > slideWidth) {
+          break;
+        }
+        slideOffset++;
+      }
+    } else {
+      slideOffset =
       indexOffset === 0 ? slidesToScroll : slidesToShow - indexOffset;
+    }
     targetSlide = currentSlide - slideOffset;
     if (lazyLoad && !infinite) {
       previousInt = currentSlide - slideOffset;
       targetSlide = previousInt === -1 ? slideCount - 1 : previousInt;
     }
   } else if (options.message === "next") {
-    slideOffset = indexOffset === 0 ? slidesToScroll : indexOffset;
+    if (scrollVisibleSlides) {
+      slideOffset = 0;
+      let widthAggregation = 0;
+      for (let i = currentSlide; i < slides.length; i++) {
+        widthAggregation += getWidth(slides[i]);
+        if (widthAggregation > slideWidth) {
+          break;
+        }
+        slideOffset++;
+      }
+    } else {
+      slideOffset = indexOffset === 0 ? slidesToScroll : indexOffset;
+    }
     targetSlide = currentSlide + slideOffset;
     if (lazyLoad && !infinite) {
       targetSlide = (currentSlide + slidesToScroll) % slideCount + indexOffset;

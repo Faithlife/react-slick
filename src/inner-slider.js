@@ -406,7 +406,7 @@ export class InnerSlider extends React.Component {
     });
   };
   changeSlide = (options, dontAnimate = false) => {
-    const spec = { ...this.props, ...this.state };
+    const spec = { ...this.props, ...this.state, listRef: this.list };
     let targetSlide = changeSlide(spec, options);
     if (targetSlide !== 0 && !targetSlide) return;
     if (dontAnimate === true) {
