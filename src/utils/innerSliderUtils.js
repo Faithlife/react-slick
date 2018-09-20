@@ -100,6 +100,10 @@ export const initializedState = spec => {
   // spec also contains listRef, trackRef
   let slideCount = React.Children.count(spec.children);
   let listWidth = Math.ceil(getWidth(ReactDOM.findDOMNode(spec.listRef)));
+  let currentSlide =
+   spec.currentSlide === undefined ? spec.initialSlide : spec.currentSlide;
+  const currentSlideDesiredWidth = spec.children[currentSlide].props.style.width;
+  listWidth = Math.max(currentSlideDesiredWidth, listWidth);
   let trackWidth = Math.ceil(getWidth(ReactDOM.findDOMNode(spec.trackRef)));
   let slideWidth;
   if (!spec.vertical) {
@@ -120,8 +124,6 @@ export const initializedState = spec => {
       ReactDOM.findDOMNode(spec.listRef).querySelector('[data-index="0"]')
     );
   let listHeight = slideHeight * spec.slidesToShow;
-  let currentSlide =
-    spec.currentSlide === undefined ? spec.initialSlide : spec.currentSlide;
   if (spec.rtl && spec.currentSlide === undefined) {
     currentSlide = slideCount - 1 - spec.initialSlide;
   }
@@ -262,7 +264,7 @@ export const changeSlide = (spec, options) => {
       slideOffset = 0;
       let widthAggregation = 0;
       for (let i = currentSlide - 1; i >= 0; i--) {
-        widthAggregation += getWidth(slides[i]);
+        widthAggregation += Math.min(getWidth(slides[i]), slideWidth);
         if (widthAggregation > slideWidth) {
           break;
         }
@@ -282,7 +284,7 @@ export const changeSlide = (spec, options) => {
       slideOffset = 0;
       let widthAggregation = 0;
       for (let i = currentSlide; i < slides.length; i++) {
-        widthAggregation += getWidth(slides[i]);
+        widthAggregation += Math.min(getWidth(slides[i]), slideWidth);
         if (widthAggregation > slideWidth) {
           break;
         }
